@@ -1,4 +1,4 @@
-# winner details
+﻿# winner details
 best_path = list()
 best_drop = 0
 
@@ -44,27 +44,33 @@ def buildgraph(row, col, elevations):
 
     return graph, elevationdict
 
-def findlongestpath(point,path=[]):
-    if path == []:
-        path = [point]
-    else:
-        path.append(point)
-    # if end of path
-    if len(graph[point]) == 0:
-        global best_path
-        global best_drop
-        # if new path is longer than best path
-        if len(path) > len(best_path):
-            best_path = path[:]
-            best_drop = drop(path)
-        if len(path) == len(best_path):
-            # if new drop is higher than best drop
-            if drop(path) > best_drop:
+def findlongestpath(graph, peaks):
+    def findpaths(point,path=[]):
+        if path == []:
+            path = [point]
+        else:
+            path.append(point)
+        # if end of path
+        if len(graph[point]) == 0:
+            global best_path
+            global best_drop
+            # if new path is longer than best path
+            if len(path) > len(best_path):
                 best_path = path[:]
-                best_drop = drop(path) 
-    # otherwise keep track of path
-    for i in graph[point]:
-        findlongestpath(i, path[:])
+                best_drop = drop(path)
+            if len(path) == len(best_path):
+                # if new drop is higher than best drop
+                if drop(path) > best_drop:
+                    best_path = path[:]
+                    best_drop = drop(path) 
+        # otherwise keep track of path
+        for i in graph[point]:
+            findpaths(i, path[:])
+
+    for p in peaks:
+        findpaths(p)
+
+    return best_path, best_drop
 
 def drop(path):
     return elevationdict[path[0]] - elevationdict[path[-1]]
@@ -88,8 +94,7 @@ peaks = set(graph.keys()) - set().union(*graph.values())
 print len(peaks), "peaks found"
 
 print "Finding longest path..."
-for p in peaks:
-    findlongestpath(p)
+best_path, best_drop = findlongestpath(graph, peaks)
 
 print "Found!"
 print "Length: {0}, Drop: {1}".format(len(best_path), best_drop)
