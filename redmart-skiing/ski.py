@@ -3,7 +3,6 @@ best_path = list()
 best_drop = 0
 
 def buildgraph(row, col, elevations):
-    print "Building adjacency list..."
     elevationdict = dict()
     graph = dict()
     id = 1
@@ -74,10 +73,15 @@ import time
 start_time = time.time()
 
 print "Reading input file..."
-with open("map.txt") as f:
-    row, col = map(int, f.readline().split())
-    elevations = [map(int,l.split()) for l in f.readlines()]
+#with open("map.txt") as f:
+#    row, col = map(int, f.readline().split())
+#    elevations = [map(int,l.split()) for l in f.readlines()]
+row, col = map(int, raw_input().split())
+elevations = []
+for _ in xrange(row):
+    elevations.append(map(int, raw_input().split()))
 
+print "Building adjacency list..."
 graph, elevationdict = buildgraph(row, col, elevations)
 
 peaks = set(graph.keys()) - set().union(*graph.values())
